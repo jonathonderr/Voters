@@ -9,6 +9,7 @@ import android.widget.TextView;
 
 public class HomeActivity extends AppCompatActivity {
 
+    Button button2;
     Button voteButton;
     Button addFriendsButton;
     public static final String EXTRA_MESSAGE = "com.vindicators.voters.MESSAGE";
@@ -17,6 +18,7 @@ public class HomeActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
+
 
         voteButton = (Button) findViewById(R.id.LetsVote);
         voteButton.setOnClickListener(new Button.OnClickListener() {
@@ -50,5 +52,7 @@ public class HomeActivity extends AppCompatActivity {
         intent.putExtra(EXTRA_MESSAGE, message);
         startActivity(intent);
     }
+
+
 }
 
