@@ -42,14 +42,18 @@ public class FinalResults extends AppCompatActivity {
         DividerItemDecoration dividerItemDecoration= new DividerItemDecoration(recyclerView.getContext(),
                 layoutManager.getOrientation());
         recyclerView.addItemDecoration(dividerItemDecoration);
+        final FinalResultsAdapter resultsAdapter = new FinalResultsAdapter(restaurants,FinalResults.this);
+        recyclerView.setAdapter(resultsAdapter);
 
-
-        getRest(new Callback() {
+        getRest( new Callback() {
             @Override
             public void onCallback(Object value) {
-                restaurants = (ArrayList<RestaurantFirebase>) value;
-                final FinalResultsAdapter resultsAdapter = new FinalResultsAdapter(restaurants,FinalResults.this);
-                recyclerView.setAdapter(resultsAdapter);
+                restaurants = new ArrayList<>();
+
+                for(int i = 0; i < ((ArrayList<RestaurantFirebase>)value).size(); i ++){
+                    restaurants.add(((ArrayList<RestaurantFirebase>)value).get(i));
+                }
+                resultsAdapter.updateData(restaurants);
             }
         });
 
