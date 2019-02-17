@@ -17,7 +17,7 @@ import java.util.*;
  * Created by delacez on 2/16/19.
  */
 
-public class CreateGroup extends AppCompatActivity {
+public class SelectRestaurant extends AppCompatActivity {
 
     private RecyclerView recyclerView;
     private RecyclerView.Adapter mAdapter;
@@ -39,15 +39,15 @@ public class CreateGroup extends AppCompatActivity {
         recyclerView.setLayoutManager(layoutManager);
 
         DividerItemDecoration dividerItemDecoration= new DividerItemDecoration(recyclerView.getContext(),
-                        layoutManager.getOrientation());
+                layoutManager.getOrientation());
         recyclerView.addItemDecoration(dividerItemDecoration);
 
         getUsers(new Callback() {
             @Override
             public void onCallback(Object value) {
                 ArrayList<User> users =(ArrayList<User>) value;
-                CreateGroupAdapter friendsAdapter = new CreateGroupAdapter(users,CreateGroup.this);
-                recyclerView.setAdapter(friendsAdapter);
+                RestaurantAdapter newAdapter = new RestaurantAdapter(users,SelectRestaurant.this);
+                recyclerView.setAdapter(newAdapter);
             }
         });
 
@@ -87,9 +87,7 @@ public class CreateGroup extends AppCompatActivity {
 
     }
     public void restaurantButtonPressed(){
-        Intent intent = new Intent(CreateGroup.this, SelectRestaurant.class);
-        Button addFriendsButton = (Button) findViewById(R.id.Restaurant);
-        startActivity(intent);
+
 
     }
 
