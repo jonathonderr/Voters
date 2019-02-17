@@ -30,10 +30,14 @@ public class MainActivity extends AppCompatActivity {
     public static final String EXTRA_MESSAGE = "com.vindicators.voters.MESSAGE";
 
     @Override
+    //onCreate - does this the first time the app is opened (unless app process is killed)
     protected void onCreate(Bundle savedInstanceState) {
-        FirebaseApp.initializeApp(this);
+        FirebaseAuth.getInstance().signOut();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        //add locationmanager initialization if we plan on updating location
+
+        FirebaseApp.initializeApp(this);
 
         emailField = findViewById(R.id.email);
         passwordField = findViewById(R.id.password);
@@ -69,18 +73,40 @@ public class MainActivity extends AppCompatActivity {
                     String message = loginButton.getText().toString();
                     intent.putExtra(EXTRA_MESSAGE, message);
                     startActivity(intent);
-                    fHelper.getVotesFriends("v0le4rd79YxXa9hh6brjM8Yy416Gx2", new Callback() {
-                        @Override
-                        public void onCallback(Object value) {
-                            Log.d("RESTAURANTS FOR VOTE", value.toString());
-                        }
-                    });
                 } else {
                     Log.d("AUTH", "No current user!!");
                 }
             }
         });
 
+    @Override
+    //onStart - does this every time the app is opened
+    protected void onStart() {
+        super.onStart();
+        LocationManager mylocation = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE); //
+        final boolean gpsEnabled = mylocation.isProviderEnabled(LocationManager.GPS_PROVIDER);  //checks if gps provider is enabled on device
+
+        if (!gpsEnabled) { //if gps provider is disabled on device
+                           // Build an alert dialog here that requests that the user enable
+                           // the location services, then when the user clicks the "OK" button,
+                           // call enableLocationSettings()
+            AlertDialog.Builder dialog = new AlertDialog.Builder(this); //alert pop-up will display
+                    dialog.setTitle("TURN ON LOCATION SERVICES");
+                    dialog.setMessage("Please turn on location services my guy");
+                    dialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) { //after "ok" button is clicked, call enableLocationSettings, dismiss pop-up
+                            enableLocationSettings();
+                            dialog.dismiss(); //MyActivity.dismiss();
+                        }
+                    });
+            dialog.show();
+        }
+    }
+
+    private void enableLocationSettings() { //takes user to location settings
+        Intent settingsIntent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+        startActivity(settingsIntent);
     }
 
     public void forgotButtonPressed() {
@@ -121,7 +147,8 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-    }
+
+}
 
 }
 
