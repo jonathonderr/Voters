@@ -36,6 +36,8 @@ public class ChooseFriendsActivity extends AppCompatActivity {
 
     private ArrayList<User> getUsers() {
         ArrayList<User> testList = new ArrayList<User>();
-        testList.add(new User.name("Bob"));
+        testList.add(new User("dfdf", "Bob", "1", null));
+
+        return testList;
     }
 }

@@ -18,11 +18,10 @@ import java.util.List;
 
 public class ChooseFriendsActivityAdapter extends RecyclerView.Adapter<ChooseFriendsActivityAdapter.ViewHolder> {
 
-    private List<FilterModel> filterList;
+    private List<User> filterList;
     private Context context;
 
-    public ChooseFriendsActivityAdapter(List<FilterModel> filterModelList
-            , Context ctx) {
+    public ChooseFriendsActivityAdapter(List<User> filterModelList, Context ctx) {
         filterList = filterModelList;
         context = ctx;
     }
@@ -39,14 +38,19 @@ public class ChooseFriendsActivityAdapter extends RecyclerView.Adapter<ChooseFri
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         User filterM = filterList.get(position);
-        holder.brandName.setText(filterM.getName());
-        holder.productCount.setText("" + filterM.getProductCount());
-        if (filterM.isSelected()) {
+        holder.brandName.setText(filterM.username);
+        //holder.productCount.setText("" + filterM.getProductCount());
+        if (filterM.selected) {
             holder.selectionState.setChecked(true);
         } else {
             holder.selectionState.setChecked(false);
         }
 
+    }
+
+    @Override
+    public int getItemCount() {
+        return filterList.size();
     }
 
 
@@ -59,7 +63,7 @@ public class ChooseFriendsActivityAdapter extends RecyclerView.Adapter<ChooseFri
         public ViewHolder(View view) {
             super(view);
             brandName = (TextView) view.findViewById(R.id.brand_name);
-            productCount = (TextView) view.findViewById(R.id.product_count);
+            //productCount = (TextView) view.findViewById(R.id.product_count);
             selectionState = (CheckBox) view.findViewById(R.id.brand_select);
 
             //item click event listener
@@ -83,7 +87,7 @@ public class ChooseFriendsActivityAdapter extends RecyclerView.Adapter<ChooseFri
 
         @Override
         public void onClick(View v) {
-            TextView brndName = (TextView) v.findViewById(R.id.brand_name);
+            TextView brandName = (TextView) v.findViewById(R.id.brand_name);
             //show more information about brand
         }
     }
