@@ -42,21 +42,21 @@ public class HomeActivity extends AppCompatActivity {
         });
 
         FirebaseServices fHelper = new FirebaseServices();
-        fHelper.USERS_REF.child(fHelper.mAuth.getCurrentUser().getUid()).child("current").addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                String vid = (String) dataSnapshot.getValue();
-                if(!vid.isEmpty()){
-                    Intent intent = new Intent(HomeActivity.this, FinalResults.class);
-                    startActivity(intent);
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
+//        fHelper.USERS_REF.child(fHelper.mAuth.getCurrentUser().getUid()).child("current").addValueEventListener(new ValueEventListener() {
+//            @Override
+//            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+//                String vid = (String) dataSnapshot.getValue();
+//                if(!vid.isEmpty()){
+//                    Intent intent = new Intent(HomeActivity.this, FinalResults.class);
+//                    startActivity(intent);
+//                }
+//            }
+//
+//            @Override
+//            public void onCancelled(@NonNull DatabaseError databaseError) {
+//
+//            }
+//        });
     }
 
     public void voteButtonPressed() {

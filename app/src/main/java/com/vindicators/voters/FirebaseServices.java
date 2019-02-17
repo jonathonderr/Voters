@@ -93,6 +93,7 @@ public class FirebaseServices {
         DatabaseReference userRef = USERS_REF.child(uid);
         userRef.child("username").setValue(username);
         userRef.child("email").setValue(email);
+        userRef.child("current").setValue("");
     }
 
     public void getFriendsCount(){

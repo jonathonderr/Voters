@@ -1,6 +1,7 @@
 package com.vindicators.voters;
 
 import android.content.Intent;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.DividerItemDecoration;
@@ -11,6 +12,10 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.SearchView;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.ValueEventListener;
+
 import java.sql.Array;
 import java.util.*;
 
@@ -18,7 +23,7 @@ public class FinalResults extends AppCompatActivity {
     private RecyclerView recyclerView;
     private RecyclerView.Adapter mAdapter;
     private RecyclerView.LayoutManager layoutManager;
-    public ArrayList<User> users = new ArrayList<>();
+    public ArrayList<RestaurantFirebase> restaurants = new ArrayList<>();
 
 
 
@@ -38,8 +43,15 @@ public class FinalResults extends AppCompatActivity {
                 layoutManager.getOrientation());
         recyclerView.addItemDecoration(dividerItemDecoration);
 
-        final CreateGroupAdapter resultsAdapter = new CreateGroupAdapter(restaurantsToAdd(),FinalResults.this);
-        recyclerView.setAdapter(resultsAdapter);
+
+        getRest(new Callback() {
+            @Override
+            public void onCallback(Object value) {
+                restaurants = (ArrayList<RestaurantFirebase>) value;
+                final FinalResultsAdapter resultsAdapter = new FinalResultsAdapter(restaurants,FinalResults.this);
+                recyclerView.setAdapter(resultsAdapter);
+            }
+        });
 
 //        SearchView searchView = findViewById(R.id.searchView);
 //        searchView.setQueryHint("Search Friends");
@@ -137,14 +149,25 @@ public class FinalResults extends AppCompatActivity {
 //        });
 //
 //    }
-    public ArrayList<RestaurantFirebase> restaurantsToAdd() {
-        ArrayList<RestaurantFirebase> testList = new ArrayList<RestaurantFirebase>();
-        testList.add(new RestaurantFirebase("3434", "McDickles", 10));
-        testList.add(new RestaurantFirebase("3334", "Wendys", 7));
-        testList.add(new RestaurantFirebase("3454", "Dininhall l3l", 1));
-        testList.add(new RestaurantFirebase("3114", "pie clock", 3));
+    public void getRest(final Callback callback){
+        final Callback cb = callback;
+        final FirebaseServices fHelper = new FirebaseServices();
+        fHelper.USERS_REF.child(fHelper.mAuth.getCurrentUser().getUid()).child("current").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                String vid = (String) dataSnapshot.getValue();
+                fHelper.getVotesRestaurants(vid, new Callback() {
+                    @Override
+                    public void onCallback(Object value) {
+                        cb.onCallback(value);
+                    }
+                });
+            }
 
-        return testList;
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
 
+            }
+        });
     }
 }
