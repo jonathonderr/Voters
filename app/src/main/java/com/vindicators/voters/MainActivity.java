@@ -74,6 +74,12 @@ public class MainActivity extends AppCompatActivity {
                     String message = loginButton.getText().toString();
                     intent.putExtra(EXTRA_MESSAGE, message);
                     startActivity(intent);
+                    fHelper.searchUsers("", new Callback() {
+                        @Override
+                        public void onCallback(Object users) {
+                            Log.d("YELP", "Users: " + users);
+                        }
+                    });
                 } else {
                     Log.d("AUTH", "No current user!!");
                 }

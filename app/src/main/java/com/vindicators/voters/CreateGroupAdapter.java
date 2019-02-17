@@ -39,12 +39,9 @@ public class CreateGroupAdapter extends RecyclerView.Adapter<CreateGroupAdapter.
     public void onBindViewHolder(ViewHolder holder, int position) {
         User filterM = filterList.get(position);
         holder.brandName.setText(filterM.username);
+        holder.user = filterM;
         //holder.productCount.setText("" + filterM.getProductCount());
-        if (filterM.selected) {
-            holder.selectionState.setChecked(true);
-        } else {
-            holder.selectionState.setChecked(false);
-        }
+        holder.selectionState.setChecked(filterM.selected);
 
     }
 
@@ -59,6 +56,7 @@ public class CreateGroupAdapter extends RecyclerView.Adapter<CreateGroupAdapter.
         public TextView brandName;
         public TextView productCount;
         public CheckBox selectionState;
+        public User user;
 
         public ViewHolder(View view) {
             super(view);
@@ -75,12 +73,15 @@ public class CreateGroupAdapter extends RecyclerView.Adapter<CreateGroupAdapter.
                 public void onCheckedChanged(CompoundButton buttonView,
                                              boolean isChecked) {
                     if (isChecked) {
-                        Toast.makeText(CreateGroupAdapter.this.context,
-                                "selected brand is " + brandName.getText(),
-                                Toast.LENGTH_LONG).show();
+                        user.selected = true;
                     } else {
-
+                        user.selected = false;
                     }
+
+                    Toast.makeText(CreateGroupAdapter.this.context,
+                            "User: " + user.selected  ,
+                            Toast.LENGTH_LONG).show();
+
                 }
             });
         }

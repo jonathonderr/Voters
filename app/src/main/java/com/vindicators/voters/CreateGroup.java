@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 import java.util.*;
 
@@ -34,70 +35,39 @@ public class CreateGroup extends AppCompatActivity {
                         layoutManager.getOrientation());
         recyclerView.addItemDecoration(dividerItemDecoration);
 
-        CreateGroupAdapter friendsAdapter = new CreateGroupAdapter(getUsers(),this);
-        recyclerView.setAdapter(friendsAdapter);
+        getUsers(new Callback() {
+            @Override
+            public void onCallback(Object value) {
+                ArrayList<User> users =(ArrayList<User>) value;
+                CreateGroupAdapter friendsAdapter = new CreateGroupAdapter(users,CreateGroup.this);
+                recyclerView.setAdapter(friendsAdapter);
+            }
+        });
+
     }
 
-    private ArrayList<User> getUsers() {
-        ArrayList<User> testList = new ArrayList<User>();
-        testList.add(new User("dfdf334", "Bo343b", "1", null));
-        testList.add(new User("df234df", "Bdf3fob", "2", null));
-        testList.add(new User("dfdfffff", "Bodb", "3", null));
-        testList.add(new User("dfdfffdgfdfd", "Bovb", "4", null));
-        testList.add(new User("dfdffewfw", "Bonb", "5", null));
-        testList.add(new User("dfdf", "Bob", "6", null));
-        testList.add(new User("dfdf", "Bob", "7", null));
-        testList.add(new User("dfdf", "Bob", "8", null));
-        testList.add(new User("dfdf", "Bob", "9", null));
-        testList.add(new User("dfdf", "Bob", "0", null));
-        testList.add(new User("dfdf", "Bob", "777", null));
-        testList.add(new User("dfdf", "Bob", "56", null));
-        testList.add(new User("dfdf", "Bob", "1", null));
-        testList.add(new User("dfdf", "Bob", "1", null));
-        testList.add(new User("dfdf", "Bob", "1", null));
-        testList.add(new User("dfdf", "Bob", "1", null));
-        testList.add(new User("dfdf", "Bob", "1", null));
-        testList.add(new User("dfdf", "Bob", "1", null));
-        testList.add(new User("dfdf", "Bob", "1", null));
-        testList.add(new User("dfdf", "Bob", "1", null));
-        testList.add(new User("dfdf", "Bob", "1", null));
-        testList.add(new User("dfdf", "Bob", "1", null));
-        testList.add(new User("dfdf", "Bob", "1", null));
-        testList.add(new User("dfdf", "Bob", "1", null));
-        testList.add(new User("dfdf", "Bob", "1", null));
-        testList.add(new User("dfdf", "Bob", "1", null));
-        testList.add(new User("dfdf", "Bob", "1", null));
-        testList.add(new User("dfdf", "Bob", "1", null));
-        testList.add(new User("dfdf", "Bob", "1", null));
-        testList.add(new User("dfdf", "Bob", "1", null));
-        testList.add(new User("dfdf", "Bob", "1", null));
-        testList.add(new User("dfdf", "Bob", "1", null));
-        testList.add(new User("dfdf", "Bob", "1", null));
-        testList.add(new User("dfdf", "Bob", "1", null));
-        testList.add(new User("dfdf", "Bob", "1", null));
-        testList.add(new User("dfdf", "Bob", "1", null));
-        testList.add(new User("dfdf", "Bob", "1", null));
-        testList.add(new User("dfdf", "Bob", "1", null));
-        testList.add(new User("dfdf", "Bob", "1", null));
-        testList.add(new User("dfdf", "Bob", "1", null));
-        testList.add(new User("dfdf", "Bob", "1", null));
-        testList.add(new User("dfdf", "Bob", "1", null));
-        testList.add(new User("dfdf", "Bob", "1", null));
-        testList.add(new User("dfdf", "Bob", "1", null));
-        testList.add(new User("dfdf", "Bob", "1", null));
-        testList.add(new User("dfdf", "Bob", "1", null));
-        testList.add(new User("dfdf", "Bob", "1", null));
-        testList.add(new User("dfdf", "Bob", "1", null));
-        testList.add(new User("dfdf", "Bob", "1", null));
-        testList.add(new User("dfdf", "Bob", "1", null));
-        testList.add(new User("dfdf", "Bob", "1", null));
-        testList.add(new User("dfdf", "Bob", "1", null));
-        testList.add(new User("dfdf", "Bob", "1", null));
-        testList.add(new User("dfdf", "Bob", "1", null));
-        testList.add(new User("dfdf", "Bob", "1", null));
-        testList.add(new User("dfdf", "Bob", "1", null));
+    private void getUsers(Callback cb) {
 
-        return testList;
+        final Callback callback = cb;
+
+        FirebaseServices fHelper = new FirebaseServices();
+        fHelper.searchUsers("", new Callback() {
+            @Override
+            public void onCallback(Object users) {
+//                User newUser = new User("Bobsyourungle", "Dontnod", "1", null);
+//                users.add(newUser);
+//                users.add(newUser);
+//                users.add(newUser);
+//                users.add(newUser);
+//                users.add(newUser);
+//                users.add(newUser);
+//                users.add(newUser);
+//                users.add(newUser);
+
+                callback.onCallback(users);
+            }
+        });
+
     }
 }
 

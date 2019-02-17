@@ -418,7 +418,7 @@ public class FirebaseServices {
                                     @Override
                                     public void onCallback(Object user) {
                                         users.add((User) user);
-                                        if(dataSnapshot.getChildrenCount() >= counT){
+                                        if(dataSnapshot.getChildrenCount() <= counT){
                                             cb.onCallback(users);
                                         }
                                     }
@@ -447,21 +447,17 @@ public class FirebaseServices {
                 for(DataSnapshot friendRaw: dataSnapshot.getChildren()){
                     count++;
 
-                    for(DataSnapshot attribRaw: friendRaw.getChildren()){
-                        switch(attribRaw.getKey()){
-                            case "id":
-                                final int counT = count;
-                                getUser((String) attribRaw.getValue(), new Callback() {
-                                    @Override
-                                    public void onCallback(Object user) {
-                                        users.add((User) user);
-                                        if(dataSnapshot.getChildrenCount() >= counT){
-                                            cb.onCallback(users);
-                                        }
-                                    }
-                                });
+                    final int counT = count;
+                    getUser(friendRaw.getKey(), new Callback() {
+                        @Override
+                        public void onCallback(Object user) {
+                            users.add((User) user);
+                            if(dataSnapshot.getChildrenCount() <= counT){
+                                cb.onCallback(users);
+                            }
                         }
-                    }
+                    });
+
                 }
             }
 
