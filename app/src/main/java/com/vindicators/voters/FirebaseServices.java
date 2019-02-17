@@ -69,7 +69,6 @@ public class FirebaseServices {
     public void signIn(String email, String password, final Callback callback){
 
         if(email == null || password == null || email.isEmpty() || password.isEmpty()){
-            callback.onCallback(null);
             return;
         }
 
@@ -80,7 +79,9 @@ public class FirebaseServices {
                     FirebaseUser user = mAuth.getCurrentUser();
                     callback.onCallback(user);
                 }else{
-                    callback.onCallback(null);
+                    if(task.getException().getLocalizedMessage().equals("There is no user record corresponding to this identifier. The user may have been deleted.")){
+                        callback.onCallback(null);
+                    }
                 }
             }
         });

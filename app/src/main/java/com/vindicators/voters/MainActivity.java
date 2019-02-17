@@ -40,7 +40,7 @@ public class MainActivity extends AppCompatActivity {
         fHelper = new FirebaseServices();
 
         //LOGIN BUTTON
-        loginButton = (Button)findViewById(R.id.login);
+        loginButton = (Button) findViewById(R.id.login);
 
         loginButton.setOnClickListener(new Button.OnClickListener() {
             @Override
@@ -49,7 +49,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        forgotButton = (Button)findViewById(R.id.forgotPassword);
+        forgotButton = (Button) findViewById(R.id.forgotPassword);
         forgotButton.setOnClickListener(new Button.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -57,13 +57,18 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-
+        //If user exists, move to home page
         FirebaseAuth.getInstance().addAuthStateListener(new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-                if(FirebaseAuth.getInstance().getCurrentUser() != null){
+                if (FirebaseAuth.getInstance().getCurrentUser() != null) {
                     Log.d("AUTH", "Auth: User logged in!!");
-                }else{
+                    Intent intent = new Intent(MainActivity.this, HomeActivity.class);
+                    Button loginButton = (Button) findViewById(R.id.login);
+                    String message = loginButton.getText().toString();
+                    intent.putExtra(EXTRA_MESSAGE, message);
+                    startActivity(intent);
+                } else {
                     Log.d("AUTH", "No current user!!");
                 }
             }
@@ -71,11 +76,14 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    public void forgotButtonPressed(){
+    public void forgotButtonPressed() {
         forgotButton.setText("change this text");
 
     }
 
+    /*
+    Function Logins in user if credentials are accurate, or creates a new user if credentials are unknown
+     */
     public void loginButtonPressed() {
 
         final String email = emailField.getText().toString();
@@ -106,18 +114,8 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        /**
-         * Called when the user taps the login button
-         */
-        public void sendMessage (View view){
-            // Do something in response to button
-            Intent intent = new Intent(this, HomeActivity.class);
-            Button loginButton = (Button) findViewById(R.id.login);
-            String message = loginButton.getText().toString();
-            intent.putExtra(EXTRA_MESSAGE, message);
-            startActivity(intent);
+    }
 
-        }
 }
 
 
