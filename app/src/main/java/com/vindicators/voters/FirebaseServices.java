@@ -1,13 +1,10 @@
 package com.vindicators.voters;
 
 import android.support.annotation.NonNull;
-import android.telecom.Call;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthException;
@@ -17,6 +14,8 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+
+import java.util.ArrayList;
 
 public class FirebaseServices {
 
@@ -99,6 +98,46 @@ public class FirebaseServices {
 
     }
 
+    public void getUser(String uid, final Callback callback){
+        final String uiD = uid;
+        DatabaseReference userRef = USERS_REF.child(uid);
+        userRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                String username = "";
+                String email = "";
+                String uid = uiD;
+                ArrayList<String> votes = new ArrayList<>();
+
+
+                for(DataSnapshot attribRaw: dataSnapshot.getChildren()){
+                    switch(attribRaw.getKey()){
+                        case "username":
+                            username = (String) attribRaw.getValue();
+                            break;
+                        case "email":
+                            email = (String) attribRaw.getValue();
+                            break;
+                        case "votes":
+                            for(DataSnapshot vote:attribRaw.getChildren()){
+                                votes.add((String) vote.getValue());
+                            }
+
+                    }
+                }
+
+                User user = new User(email, username, uid, votes);
+                callback.onCallback(user);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Log.d("DATABASE ERROR", databaseError.getMessage());
+            }
+        });
+    }
+
     //DATA-VOTES
 
     public void createVote(String uid){
@@ -170,9 +209,6 @@ public class FirebaseServices {
             }
         });
     }
-
-
-
 
     public void getVotesCount(final Callback callback){
         VOTES_REF.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -249,7 +285,76 @@ public class FirebaseServices {
         });
     }
 
+    public void getVotesRestaurants(String vid, final Callback callback){
+        DatabaseReference voteRef = VOTES_REF.child(vid);
+        final ArrayList<RestaurantFirebase> restaurants = new ArrayList<>();
+        voteRef.child("restaurants").orderByChild("votes").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for(DataSnapshot childRaw:dataSnapshot.getChildren()) {
+                    String id = "";
+                    String name = "";
+                    int votes = 0;
 
+                    for (DataSnapshot attribRaw : childRaw.getChildren()) {
+                        if (attribRaw.getKey().equals("restaurant")) {
+                            id = (String) attribRaw.getValue();
+                            name = (String) attribRaw.getValue();
+                        }
+                        if (attribRaw.getKey().equals("votes")) {
+                            Log.d("RESTAURANTS", attribRaw.getValue().toString());
+                            votes = Integer.parseInt(attribRaw.getValue().toString());
+                        }
+                    }
+                    RestaurantFirebase restaurant = new RestaurantFirebase(id, name, votes);
+                    restaurants.add(0,restaurant);
+                }
+                callback.onCallback(restaurants);
+                restaurants.clear();
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Log.d("DATABASE ERROR", databaseError.getMessage());
+            }
+        });
+    }
+
+    public void getVotesFriends(String vid, final Callback callback){
+        final DatabaseReference voteRef = VOTES_REF.child(vid);
+        final ArrayList<User> friends = new ArrayList<>();
+        voteRef.child("friends").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull final DataSnapshot dataSnapshot) {
+                 int count = 0;
+                for(DataSnapshot friendRaw: dataSnapshot.getChildren()){
+                    count++;
+
+                    final int countFinal = count;
+                    final String uid = (String) friendRaw.getValue();
+                    getUser(uid, new Callback() {
+                        @Override
+                        public void onCallback(Object user) {
+                            friends.add((User) user);
+                            if(countFinal >= dataSnapshot.getChildrenCount()){
+                                callback.onCallback(friends);
+                            }
+                        }
+                    });
+
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Log.d("DATABASE ERROR", databaseError.getMessage());
+            }
+        });
+    }
+
+    public void getVotesTopRestaurant(String vid, Callback callback){
+
+    }
 }
 
 

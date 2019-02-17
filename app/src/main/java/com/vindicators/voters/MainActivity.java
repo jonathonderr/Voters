@@ -46,6 +46,7 @@ public class MainActivity extends AppCompatActivity {
 
         //LOGIN BUTTON
         loginButton = (Button) findViewById(R.id.login);
+
         loginButton.setOnClickListener(new Button.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -80,48 +81,49 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    @Override
-    //onStart - does this every time the app is opened
-    protected void onStart() {
-        super.onStart();
-        LocationManager mylocation = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE); //
-        final boolean gpsEnabled = mylocation.isProviderEnabled(LocationManager.GPS_PROVIDER);  //checks if gps provider is enabled on device
+        @Override
+        //onStart - does this every time the app is opened
+        protected void onStart () {
+            super.onStart();
+            LocationManager mylocation = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE); //
+            final boolean gpsEnabled = mylocation.isProviderEnabled(LocationManager.GPS_PROVIDER);  //checks if gps provider is enabled on device
 
         if (!gpsEnabled) { //if gps provider is disabled on device
-            // Build an alert dialog here that requests that the user enable
-            // the location services, then when the user clicks the "OK" button,
-            // call enableLocationSettings()
+                           // Build an alert dialog here that requests that the user enable
+                           // the location services, then when the user clicks the "OK" button,
+                           // call enableLocationSettings()
             AlertDialog.Builder dialog = new AlertDialog.Builder(this); //alert pop-up will display
-            dialog.setTitle("TURN ON LOCATION SERVICES");
-            dialog.setMessage("Please turn on location services my guy");
-            dialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) { //after "ok" button is clicked, call enableLocationSettings, dismiss pop-up
-                    enableLocationSettings();
-                    dialog.dismiss(); //MyActivity.dismiss();
-                }
-            });
+                    dialog.setTitle("TURN ON LOCATION SERVICES");
+                    dialog.setMessage("Please turn on location services my guy");
+                    dialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) { //after "ok" button is clicked, call enableLocationSettings, dismiss pop-up
+                            enableLocationSettings();
+                            dialog.dismiss(); //MyActivity.dismiss();
+                        }
+                    });
             dialog.show();
         }
     }
 
-    private void enableLocationSettings() { //takes user to location settings
-        Intent settingsIntent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-        startActivity(settingsIntent);
-    }
+        private void enableLocationSettings () { //takes user to location settings
+            Intent settingsIntent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+            startActivity(settingsIntent);
+        }
 
-    public void forgotButtonPressed() {
-        forgotButton.setText("change this text");
+        public void forgotButtonPressed(){
+            forgotButton.setText("change this text");
 
     }
 
     /*
-    Function Log-ins in user if credentials are accurate, or creates a new user if credentials are unknown
+    Function Logins in user if credentials are accurate, or creates a new user if credentials are unknown
      */
     public void loginButtonPressed() {
 
         final String email = emailField.getText().toString();
         final String password = passwordField.getText().toString();
+
 
         fHelper.signIn(email, password, new Callback() {
             @Override
@@ -148,9 +150,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
 
-    }
-
-
+}
 
 }
 
