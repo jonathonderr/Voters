@@ -39,9 +39,11 @@ public class FirebaseServices {
 
     //USER
 
-    public void createUser(String email, String password, String username){
+    public void createUser(final String email, String password, String username){
 
         final String userName = username;
+        final String eMail = email;
+        final String passWord = password;
 
         mAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
             @Override
@@ -50,7 +52,12 @@ public class FirebaseServices {
                     FirebaseUser user = mAuth.getCurrentUser();
                     currentUser = user;
                     createUserDatabase(user.getUid(), user.getEmail(), userName);
-                    Log.d("UserCreation", "User: " + user + " has been created");
+                    signIn(eMail, passWord, new Callback() {
+                        @Override
+                        public void onCallback(Object value) {
+                            //Do nothing
+                        }
+                    });
                 }else{
                     FirebaseAuthException e = (FirebaseAuthException )task.getException();
                     Log.d("UserCreation", e.getMessage());
@@ -58,6 +65,27 @@ public class FirebaseServices {
             }
         });
     }
+
+    public void signIn(String email, String password, final Callback callback){
+
+        if(email == null || password == null || email.isEmpty() || password.isEmpty()){
+            callback.onCallback(null);
+            return;
+        }
+
+        mAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+            @Override
+            public void onComplete(@NonNull Task<AuthResult> task) {
+                if(task.isSuccessful()){
+                    FirebaseUser user = mAuth.getCurrentUser();
+                    callback.onCallback(user);
+                }else{
+                    callback.onCallback(null);
+                }
+            }
+        });
+    }
+
 
     //DATABASE
     public void createUserDatabase(String uid, String email, String username) {
@@ -78,8 +106,12 @@ public class FirebaseServices {
             @Override
             public void onCallback(Object voteCount) {
                 DatabaseReference voteRef = VOTES_REF.child("v" + voteCount + uiD);
-                voteRef.child("top_result").setValue("Jimmy Johns");
+                voteRef.child("top_result").setValue("Not enough people have voted yet");
                 voteRef.child("host").setValue(uiD);
+                addVotesFriend("v" + voteCount + uiD, uiD);
+
+                //For loop with restaurants --
+                addVotesRestaurant("v" + voteCount + uiD, "Wendys", uiD);
             }
         });
 
@@ -88,10 +120,17 @@ public class FirebaseServices {
     public void addVotesFriend(String vid, String uid){
         final DatabaseReference voteRef = VOTES_REF.child(vid);
         final String uiD = uid;
+        final String viD = vid;
         getVotesFriendsCount(vid, new Callback() {
             @Override
             public void onCallback(Object count){
                 voteRef.child("friends").child("f" + count).setValue(uiD);
+                getPathCount(USERS_REF.child(uiD).child("votes"), new Callback() {
+                    @Override
+                    public void onCallback(Object value) {
+                        USERS_REF.child(uiD).child("votes").child("v" + value).setValue(viD);
+                    }
+                });
             }
         });
     }
@@ -113,6 +152,7 @@ public class FirebaseServices {
                     @Override
                     public void onCallback(Object votes){
                         voteRef.child("restaurants").child("r" + counT).child("votes").setValue((int)votes + 1);
+                        //Log.d("RESTAURANT", votes.toString());
 
                         getPathCount(voteRef.child("restaurants").child("r" + counT).child("voters"), new Callback() {
                             @Override
@@ -197,7 +237,7 @@ public class FirebaseServices {
         VOTES_REF.child(vID).child("restaurants").child(rid).child("votes").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                int votes  = (int) dataSnapshot.getValue();
+                int votes  = (int) (dataSnapshot.getValue() == null ? 0 : dataSnapshot.getValue());
                 callback.onCallback(votes);
             }
 
