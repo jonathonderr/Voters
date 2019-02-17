@@ -1,16 +1,16 @@
 package com.vindicators.voters;
 
 
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.SearchView;
 
-import java.lang.reflect.Array;
 import java.util.*;
 
 /**
@@ -29,7 +29,7 @@ public class CreateGroup extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_group);
 
-        recyclerView = (RecyclerView) findViewById(R.id.my_friends_list);
+        recyclerView = (RecyclerView) findViewById(R.id.restaurant_list);
 
         recyclerView.setHasFixedSize(true);
 
@@ -75,6 +75,15 @@ public class CreateGroup extends AppCompatActivity {
         });
 
 
+        Button continueButton = findViewById(R.id.goToVotesButton);
+        continueButton.setOnClickListener(new Button.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                continueToRestaurants();
+            }
+        });
+
+
     }
 
     private void getUsers(String query, Callback cb) {
@@ -94,5 +103,11 @@ public class CreateGroup extends AppCompatActivity {
     public void setUsers(ArrayList<User> users){
         this.users = users;
     }
+
+    public void continueToRestaurants(){
+        Intent intent = new Intent(CreateGroup.this, SelectRestaurant.class);
+        startActivity(intent);
+    }
+
 }
 
