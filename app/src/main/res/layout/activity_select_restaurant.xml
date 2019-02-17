@@ -36,7 +36,7 @@
     <android.support.v7.widget.RecyclerView
         android:id="@+id/restaurant_list"
         android:layout_width="368dp"
-        android:layout_height="462dp"
+        android:layout_height="417dp"
         android:layout_marginTop="16dp"
         android:scrollbars="vertical"
         app:layout_constraintLeft_toLeftOf="parent"

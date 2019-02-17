@@ -42,8 +42,8 @@
     <ImageView
         android:layout_width="179dp"
         android:layout_height="119dp"
-        android:layout_marginTop="184dp"
-        android:src="@drawable/ic_iconmonstr_thumb_2"
+        android:layout_marginTop="164dp"
+        android:src="@drawable/newlogo"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
