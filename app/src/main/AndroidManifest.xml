@@ -13,7 +13,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".FinalResults" />
+        <activity android:name=".FinalResults"
+            android:parentActivityName=".HomeActivity"/>
         <activity android:name=".RestaurantAdapter" />
         <activity android:name=".VotingPageAdapter" />
         <activity
