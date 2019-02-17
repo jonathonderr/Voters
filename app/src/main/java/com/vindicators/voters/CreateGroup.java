@@ -31,7 +31,7 @@ public class CreateGroup extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_group);
 
-        recyclerView = (RecyclerView) findViewById(R.id.restaurant_list);
+        recyclerView = (RecyclerView) findViewById(R.id.my_friends_list);
 
         recyclerView.setHasFixedSize(true);
 
@@ -77,7 +77,7 @@ public class CreateGroup extends AppCompatActivity {
         });
 
 
-        Button continueButton = findViewById(R.id.goToVotesButton);
+        Button continueButton = findViewById(R.id.ChooseRest);
         continueButton.setOnClickListener(new Button.OnClickListener() {
             @Override
             public void onClick(View v) {
