@@ -29,7 +29,8 @@ class Restaurant{
 public class APIHelperFunctions {
     YelpFusionApiFactory yelpFusionApiFactory;
     YelpFusionApi yelpFusionApi;
-    static ArrayList<Restaurant> restaurantArrayList = new ArrayList<Restaurant>();
+
+    public static ArrayList<Restaurant> restaurantArrayList = new ArrayList<Restaurant>();
     static Business business[];
 
     public APIHelperFunctions() throws IOException {

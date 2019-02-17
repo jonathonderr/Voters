@@ -138,13 +138,21 @@ public class FirebaseServices {
         });
     }
 
-    public void addUserFriend(String uid, String friendUid, Callback cb){
+    public void addUserFriend(String uid, final String friendUid, Callback cb){
         final String frienduid = friendUid;
         final DatabaseReference userRef = USERS_REF.child(uid);
         getFriendsCount(uid, new Callback() {
             @Override
             public void onCallback(Object count) {
-                userRef.child("friends").child("f" + count).setValue(frienduid);
+                userRef.child("friends").child("f" + count).child("id").setValue(frienduid);
+                final Object counT = count;
+                getUser(friendUid, new Callback() {
+                    @Override
+                    public void onCallback(Object user) {
+                        User useR = (User) user;
+                        userRef.child("friends").child("f" + counT).child("username").setValue(useR.username);
+                    }
+                });
             }
         });
 
@@ -391,10 +399,77 @@ public class FirebaseServices {
         });
     }
 
-    public void searchFriends(String uid, String query){
+    public void searchFriends(String uid, String query, Callback callback){
+        final Callback cb = callback;
         DatabaseReference userFriendsRef = USERS_REF.child(uid).child("friends");
+        userFriendsRef.orderByChild("username").startAt(query).endAt(query +"\uf8ff").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull final DataSnapshot dataSnapshot) {
+                final ArrayList<User> users = new ArrayList<>();
+                int count = 0;
+                for(DataSnapshot friendRaw: dataSnapshot.getChildren()){
+                    count++;
 
+                    for(DataSnapshot attribRaw: friendRaw.getChildren()){
+                        switch(attribRaw.getKey()){
+                            case "id":
+                                final int counT = count;
+                                getUser((String) attribRaw.getValue(), new Callback() {
+                                    @Override
+                                    public void onCallback(Object user) {
+                                        users.add((User) user);
+                                        if(dataSnapshot.getChildrenCount() >= counT){
+                                            cb.onCallback(users);
+                                        }
+                                    }
+                                });
+                        }
+                    }
+                }
+            }
 
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Log.e("DATABASE ERROR", databaseError.getMessage());
+            }
+        });
+
+    }
+
+    public void searchUsers(String query, Callback callback){
+        final Callback cb = callback;
+        DatabaseReference userRef = USERS_REF;
+        userRef.orderByChild("username").startAt(query).endAt(query +"\uf8ff").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull final DataSnapshot dataSnapshot) {
+                final ArrayList<User> users = new ArrayList<>();
+                int count = 0;
+                for(DataSnapshot friendRaw: dataSnapshot.getChildren()){
+                    count++;
+
+                    for(DataSnapshot attribRaw: friendRaw.getChildren()){
+                        switch(attribRaw.getKey()){
+                            case "id":
+                                final int counT = count;
+                                getUser((String) attribRaw.getValue(), new Callback() {
+                                    @Override
+                                    public void onCallback(Object user) {
+                                        users.add((User) user);
+                                        if(dataSnapshot.getChildrenCount() >= counT){
+                                            cb.onCallback(users);
+                                        }
+                                    }
+                                });
+                        }
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Log.e("DATABASE ERROR", databaseError.getMessage());
+            }
+        });
     }
 
 }
