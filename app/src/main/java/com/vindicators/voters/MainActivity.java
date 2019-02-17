@@ -2,6 +2,7 @@ package com.vindicators.voters;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.DialogInterface;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
@@ -10,6 +11,8 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.EditText;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -23,6 +26,7 @@ public class MainActivity extends AppCompatActivity {
     Button forgotButton;
     EditText emailField;
     EditText passwordField;
+    public static final String EXTRA_MESSAGE = "com.vindicators.voters.MESSAGE";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,17 +76,17 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    public void loginButtonPressed(){
+    public void loginButtonPressed() {
 
         final String email = emailField.getText().toString();
-        final String password =  passwordField.getText().toString();
+        final String password = passwordField.getText().toString();
 
 
         fHelper.signIn(email, password, new Callback() {
             @Override
             public void onCallback(Object value) {
 
-                if(value == null) {
+                if (value == null) {
                     final EditText taskEditText = new EditText(MainActivity.this);
                     taskEditText.setHint("Username");
                     AlertDialog dialog = new AlertDialog.Builder(MainActivity.this)
@@ -102,6 +106,20 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-    }
+        /**
+         * Called when the user taps the login button
+         */
+        public void sendMessage (View view){
+            // Do something in response to button
+            Intent intent = new Intent(this, HomeActivity.class);
+            Button loginButton = (Button) findViewById(R.id.login);
+            String message = loginButton.getText().toString();
+            intent.putExtra(EXTRA_MESSAGE, message);
+            startActivity(intent);
 
-    }
+        }
+}
+
+
+
+
