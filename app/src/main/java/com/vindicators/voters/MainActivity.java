@@ -15,6 +15,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.EditText;
 
+import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
@@ -30,7 +31,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        FirebaseAuth.getInstance().signOut();
+        FirebaseApp.initializeApp(this);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
@@ -68,6 +69,12 @@ public class MainActivity extends AppCompatActivity {
                     String message = loginButton.getText().toString();
                     intent.putExtra(EXTRA_MESSAGE, message);
                     startActivity(intent);
+                    fHelper.getVotesFriends("v0le4rd79YxXa9hh6brjM8Yy416Gx2", new Callback() {
+                        @Override
+                        public void onCallback(Object value) {
+                            Log.d("RESTAURANTS FOR VOTE", value.toString());
+                        }
+                    });
                 } else {
                     Log.d("AUTH", "No current user!!");
                 }
