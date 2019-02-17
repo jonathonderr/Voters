@@ -1,6 +1,9 @@
 package com.vindicators.voters;
 
-import android.content.Context;
+import android.content.*;
+import android.location.*;
+import android.provider.Settings;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -18,9 +21,40 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+         //add locationmanager initialization if we plan on updating location
 
         FirebaseApp.initializeApp(this);
+    }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+        LocationManager mylocation = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
+        //final boolean gpsEnabled = mylocation.isProviderEnabled(LocationManager.GPS_PROVIDER);
+        final boolean gpsEnabled = false;
+
+        if (!gpsEnabled) {
+            AlertDialog.Builder dialog = new AlertDialog.Builder(this);
+                    dialog.setTitle("TURN ON LOCATION SERVICES");
+                    dialog.setMessage("Please turn on location services before using this app");
+                    dialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            enableLocationSettings();
+                            dialog.dismiss(); //MyActivity.dismiss();
+                        }
+                    });
+
+            // Build an alert dialog here that requests that the user enable
+            // the location services, then when the user clicks the "OK" button,
+            // call enableLocationSettings()
+        }
 
     }
+
+    private void enableLocationSettings() {
+        Intent settingsIntent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+        startActivity(settingsIntent);
+    }
+
 }
