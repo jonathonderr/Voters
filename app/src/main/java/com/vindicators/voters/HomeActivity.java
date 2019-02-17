@@ -9,26 +9,38 @@ import android.widget.TextView;
 
 public class HomeActivity extends AppCompatActivity {
 
-    Button VoteButton;
-
+    Button voteButton;
+    Button addFriendsButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
 
-        VoteButton = (Button) findViewById(R.id.LetsVote);
-        VoteButton.setOnClickListener(new Button.OnClickListener() {
+        voteButton = (Button) findViewById(R.id.LetsVote);
+        voteButton.setOnClickListener(new Button.OnClickListener() {
             @Override
             public void onClick(View v) {
-                VoteButtonPressed();
+                voteButtonPressed();
             }
         });
 
+        addFriendsButton = (Button) findViewById(R.id.AddFriends);
+        addFriendsButton.setOnClickListener(new Button.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                addFriendsButtonPressed();
+            }
+        });
     }
 
-    public void VoteButtonPressed() {
-        VoteButton.setText("change this text");
+    public void voteButtonPressed() {
+        voteButton.setText("change this text");
+
+    }
+
+    public void addFriendsButtonPressed() {
+        addFriendsButton.setText("change this text too");
 
     }
 }
