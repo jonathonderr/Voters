@@ -8,6 +8,7 @@ public class User {
     String username;
     String uid;
     ArrayList<String> votes;
+    Boolean selected = false;
 
     public User(String email, String username, String uid, ArrayList<String> votes){
         this.email = email;

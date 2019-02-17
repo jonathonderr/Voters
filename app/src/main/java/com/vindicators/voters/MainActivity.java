@@ -75,6 +75,12 @@ public class MainActivity extends AppCompatActivity {
                     String message = loginButton.getText().toString();
                     intent.putExtra(EXTRA_MESSAGE, message);
                     startActivity(intent);
+                    fHelper.addUserFriend(fHelper.mAuth.getCurrentUser().getUid(), "PhubbEkVb2Tp57BrfmjnTxcY2yi1", new Callback() {
+                        @Override
+                        public void onCallback(Object value) {
+
+                        }
+                    });
                 } else {
                     Log.d("AUTH", "No current user!!");
                 }

@@ -5,6 +5,8 @@ public class RestaurantFirebase {
     String id;
     String name;
     int votes;
+    Boolean selected = false;
+
 
     public RestaurantFirebase(String id, String name, int votes){
         this.id = id;
