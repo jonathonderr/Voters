@@ -20,8 +20,8 @@ public class ChooseFriendsActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.my_activity);
-        recyclerView = (RecyclerView) findViewById(R.id.my_recycler_view);
+        setContentView(R.layout.activity_choosefriends);
+        recyclerView = (RecyclerView) findViewById(R.id.my_friends_list);
 
         recyclerView.setHasFixedSize(true);
 
