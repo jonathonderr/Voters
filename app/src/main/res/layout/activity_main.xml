@@ -89,4 +89,13 @@
         app:layout_constraintStart_toStartOf="@+id/guidelineLeft"
         app:layout_constraintTop_toBottomOf="@+id/login" />
 
+    <ImageView
+        android:layout_width="142dp"
+        android:layout_height="78dp"
+        android:src="@drawable/ic_voters_logo"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:layout_editor_absoluteY="37dp" />
+
 </android.support.constraint.ConstraintLayout>

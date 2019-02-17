@@ -1,7 +1,6 @@
 package com.vindicators.voters;
 
 
-import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.DividerItemDecoration;
@@ -9,7 +8,6 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
 import android.widget.SearchView;
 
 import java.lang.reflect.Array;
@@ -19,9 +17,7 @@ import java.util.*;
  * Created by delacez on 2/16/19.
  */
 
-public class CreateGroup extends AppCompatActivity {
-
-    Button chooseRestaurantButton;
+public class VotingPage extends AppCompatActivity {
 
     private RecyclerView recyclerView;
     private RecyclerView.Adapter mAdapter;
@@ -30,7 +26,6 @@ public class CreateGroup extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_group);
 
@@ -45,7 +40,7 @@ public class CreateGroup extends AppCompatActivity {
                 layoutManager.getOrientation());
         recyclerView.addItemDecoration(dividerItemDecoration);
 
-        final CreateGroupAdapter friendsAdapter = new CreateGroupAdapter(users,CreateGroup.this);
+        final VotingPageAdapter friendsAdapter = new VotingPageAdapter(users,VotingPage.this);
         recyclerView.setAdapter(friendsAdapter);
 
         SearchView searchView = findViewById(R.id.searchView);
@@ -79,13 +74,7 @@ public class CreateGroup extends AppCompatActivity {
             }
         });
 
-        chooseRestaurantButton = (Button) findViewById(R.id.ChooseRest);
-        chooseRestaurantButton.setOnClickListener(new Button.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                chooseRestaurantButtonPressed();
-            }
-        });
+
     }
 
     private void getUsers(String query, Callback cb) {
@@ -105,12 +94,5 @@ public class CreateGroup extends AppCompatActivity {
     public void setUsers(ArrayList<User> users){
         this.users = users;
     }
-
-    public void chooseRestaurantButtonPressed() {
-        Intent intent = new Intent(CreateGroup.this, VotingPage.class);
-        Button chooseRestaurantButton = (Button) findViewById(R.id.ChooseRest);
-        startActivity(intent);
-    }
-
 }
 

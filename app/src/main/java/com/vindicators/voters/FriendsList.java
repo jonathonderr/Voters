@@ -30,7 +30,7 @@ public class FriendsList extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_create_group);
+        setContentView(R.layout.activity_friends_list);
         recyclerView = (RecyclerView) findViewById(R.id.my_friends_list);
 
         recyclerView.setHasFixedSize(true);
@@ -51,15 +51,7 @@ public class FriendsList extends AppCompatActivity {
             }
         });
 
-        //RESTAURANT BUTTON
-        restaurantButton = (Button) findViewById(R.id.Restaurant);
 
-        restaurantButton.setOnClickListener(new Button.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                restaurantButtonPressed();
-            }
-        });
 
     }
 
@@ -86,10 +78,7 @@ public class FriendsList extends AppCompatActivity {
         });
 
     }
-    public void restaurantButtonPressed(){
 
-
-    }
 
 
 }
