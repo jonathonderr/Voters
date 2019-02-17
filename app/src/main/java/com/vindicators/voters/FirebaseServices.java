@@ -1,6 +1,7 @@
 package com.vindicators.voters;
 
 import android.support.annotation.NonNull;
+import android.telecom.Call;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -11,8 +12,11 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthException;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 public class FirebaseServices {
 
@@ -62,4 +66,149 @@ public class FirebaseServices {
         userRef.child("email").setValue(email);
     }
 
+    public void getFriendsCount(){
+
+    }
+
+    //DATA-VOTES
+
+    public void createVote(String uid){
+        final String uiD = uid;
+        getVotesCount(new Callback() {
+            @Override
+            public void onCallback(Object voteCount) {
+                DatabaseReference voteRef = VOTES_REF.child("v" + voteCount + uiD);
+                voteRef.child("top_result").setValue("Jimmy Johns");
+                voteRef.child("host").setValue(uiD);
+            }
+        });
+
+    }
+
+    public void addVotesFriend(String vid, String uid){
+        final DatabaseReference voteRef = VOTES_REF.child(vid);
+        final String uiD = uid;
+        getVotesFriendsCount(vid, new Callback() {
+            @Override
+            public void onCallback(Object count){
+                voteRef.child("friends").child("f" + count).setValue(uiD);
+            }
+        });
+    }
+
+    public void addVotesRestaurant(String vid, String rid, String uid){
+        final DatabaseReference voteRef = VOTES_REF.child(vid);
+        final String uiD = uid;
+        final String riD = rid;
+        final String viD = vid;
+
+        getVotesRestaurantsCount(vid, new Callback() {
+            @Override
+            public void onCallback(Object count){
+                voteRef.child("restaurants").child("r" + count).child("restaurant").setValue(riD);
+
+                final Object counT = count;
+
+                getVotesRestaurantsVotes(viD, "r" + count, new Callback(){
+                    @Override
+                    public void onCallback(Object votes){
+                        voteRef.child("restaurants").child("r" + counT).child("votes").setValue((int)votes + 1);
+
+                        getPathCount(voteRef.child("restaurants").child("r" + counT).child("voters"), new Callback() {
+                            @Override
+                            public void onCallback(Object fCount) {
+                                voteRef.child("restaurants").child("r" + counT).child("voters").child("f" + fCount).setValue(uiD);
+
+                            }
+                        });
+
+
+                    }
+                });
+
+            }
+        });
+    }
+
+
+
+
+    public void getVotesCount(final Callback callback){
+        VOTES_REF.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                long count  = dataSnapshot.getChildrenCount();
+                callback.onCallback(count);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                callback.onCallback(null);
+            }
+        });
+    }
+
+    public void getVotesFriendsCount(String vID, final Callback callback){
+        VOTES_REF.child(vID).child("friends").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                long count  = dataSnapshot.getChildrenCount();
+                callback.onCallback(count);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                callback.onCallback(null);
+            }
+        });
+    }
+
+    public void getVotesRestaurantsCount(String vID, final Callback callback){
+        VOTES_REF.child(vID).child("restaurants").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                long count  = dataSnapshot.getChildrenCount();
+                callback.onCallback(count);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                callback.onCallback(null);
+            }
+        });
+    }
+
+    public void getPathCount(DatabaseReference ref, final Callback callback){
+      ref.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                long count  = dataSnapshot.getChildrenCount();
+                callback.onCallback(count);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                callback.onCallback(null);
+            }
+        });
+    }
+
+    public void getVotesRestaurantsVotes(String vID, String rid, final Callback callback){
+        VOTES_REF.child(vID).child("restaurants").child(rid).child("votes").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                int votes  = (int) dataSnapshot.getValue();
+                callback.onCallback(votes);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                callback.onCallback(null);
+            }
+        });
+    }
+
+
 }
+
+
