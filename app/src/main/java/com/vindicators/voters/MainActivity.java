@@ -32,7 +32,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     //onCreate - does this the first time the app is opened (unless app process is killed)
     protected void onCreate(Bundle savedInstanceState) {
-        FirebaseAuth.getInstance().signOut();
+        //FirebaseAuth.getInstance().signOut();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         //add locationmanager initialization if we plan on updating location

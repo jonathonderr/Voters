@@ -11,6 +11,7 @@ public class HomeActivity extends AppCompatActivity {
 
     Button voteButton;
     Button addFriendsButton;
+    public static final String EXTRA_MESSAGE = "com.vindicators.voters.MESSAGE";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,13 +36,19 @@ public class HomeActivity extends AppCompatActivity {
     }
 
     public void voteButtonPressed() {
-        voteButton.setText("change this text");
-
+        Intent intent = new Intent(HomeActivity.this, CreateGroup.class);
+        Button voteButton = (Button) findViewById(R.id.LetsVote);
+        String message = voteButton.getText().toString();
+        intent.putExtra(EXTRA_MESSAGE, message);
+        startActivity(intent);
     }
 
     public void addFriendsButtonPressed() {
-        addFriendsButton.setText("change this text too");
-
+        Intent intent = new Intent(HomeActivity.this, FriendsList.class);
+        Button addFriendsButton = (Button) findViewById(R.id.AddFriends);
+        String message = addFriendsButton.getText().toString();
+        intent.putExtra(EXTRA_MESSAGE, message);
+        startActivity(intent);
     }
 }
 
