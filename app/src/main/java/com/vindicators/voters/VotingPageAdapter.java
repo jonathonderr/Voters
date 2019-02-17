@@ -5,6 +5,7 @@ package com.vindicators.voters;
  */
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -92,11 +93,13 @@ public class VotingPageAdapter extends RecyclerView.Adapter<VotingPageAdapter.Vi
                                              boolean isChecked) {
                     if (isChecked) {
 
-                        FirebaseServices fHelper = new FirebaseServices();
+                        final FirebaseServices fHelper = new FirebaseServices();
                         fHelper.USERS_REF.child(fHelper.mAuth.getCurrentUser().getUid()).child("current").addListenerForSingleValueEvent(new ValueEventListener() {
                             @Override
                             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-
+                                final String vid = (String) dataSnapshot.getValue();
+                                fHelper.addVotesRestaurant(vid, restaurantFirebase.id, restaurantFirebase.name, fHelper.mAuth.getCurrentUser().getUid());
+                                Intent intent = new Intent(context, FinalResults.class);
                             }
 
                             @Override

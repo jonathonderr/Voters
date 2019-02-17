@@ -331,7 +331,7 @@ public class FirebaseServices {
         VOTES_REF.child(vID).child("restaurants").child(rid).child("votes").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                int votes  = (int) (dataSnapshot.getValue() == null ? 0 : dataSnapshot.getValue());
+                int votes  = (int) ((dataSnapshot.getValue() == null) ? 0 : dataSnapshot.getValue());
                 callback.onCallback(votes);
             }
 
