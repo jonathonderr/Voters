@@ -1,6 +1,7 @@
 package com.vindicators.voters;
 
 import android.support.annotation.NonNull;
+import android.telecom.Call;
 import android.util.Log;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -172,7 +173,8 @@ public class FirebaseServices {
 
     //DATA-VOTES
 
-    public void createVote(String uid){
+    public void createVote(String uid, Callback cb){
+        final Callback callback = cb;
         final String uiD = uid;
         getVotesCount(new Callback() {
             @Override
@@ -180,56 +182,63 @@ public class FirebaseServices {
                 DatabaseReference voteRef = VOTES_REF.child("v" + voteCount + uiD);
                 voteRef.child("top_result").setValue("Not enough people have voted yet");
                 voteRef.child("host").setValue(uiD);
-                addVotesFriend("v" + voteCount + uiD, uiD);
+                addVotesFriend("v" + voteCount + uiD, uiD, new Callback() {
+                    @Override
+                    public void onCallback(Object value) {
 
+                    }
+                });
+                callback.onCallback("v"+voteCount + uiD);
                 //For loop with restaurants --
-                addVotesRestaurant("v" + voteCount + uiD, "Wendys", uiD);
             }
         });
 
     }
 
-    public void addVotesFriend(String vid, String uid){
+    public void addVotesFriend(String vid, String uid, final Callback callback){
         final DatabaseReference voteRef = VOTES_REF.child(vid);
         final String uiD = uid;
         final String viD = vid;
-        getVotesFriendsCount(vid, new Callback() {
+        final Callback cb = callback;
+        getPathCount(voteRef.child("friends"), new Callback() {
             @Override
-            public void onCallback(Object count){
+            public void onCallback(Object count) {
+                Log.d("User", count.toString());
                 voteRef.child("friends").child("f" + count).setValue(uiD);
                 getPathCount(USERS_REF.child(uiD).child("votes"), new Callback() {
                     @Override
                     public void onCallback(Object value) {
                         USERS_REF.child(uiD).child("votes").child("v" + value).setValue(viD);
+                        callback.onCallback(null);
                     }
                 });
             }
         });
     }
 
-    public void addVotesRestaurant(String vid, String rid, String uid){
+    public void addVotesRestaurant(String vid, String rid, String name, String uid){
         final DatabaseReference voteRef = VOTES_REF.child(vid);
         final String uiD = uid;
         final String riD = rid;
         final String viD = vid;
-
+        final String namE = name;
         getVotesRestaurantsCount(vid, new Callback() {
             @Override
             public void onCallback(Object count){
-                voteRef.child("restaurants").child("r" + count).child("restaurant").setValue(riD);
+                voteRef.child("restaurants").child(riD).child("restaurant").setValue(namE);
 
                 final Object counT = count;
 
-                getVotesRestaurantsVotes(viD, "r" + count, new Callback(){
+                getVotesRestaurantsVotes(viD, riD, new Callback(){
                     @Override
                     public void onCallback(Object votes){
-                        voteRef.child("restaurants").child("r" + counT).child("votes").setValue((int)votes + 1);
+                        voteRef.child("restaurants").child(riD).child("votes").setValue((int)votes + 1);
                         //Log.d("RESTAURANT", votes.toString());
 
-                        getPathCount(voteRef.child("restaurants").child("r" + counT).child("voters"), new Callback() {
+                        getPathCount(voteRef.child("restaurants").child(riD).child("voters"), new Callback() {
                             @Override
                             public void onCallback(Object fCount) {
-                                voteRef.child("restaurants").child("r" + counT).child("voters").child("f" + fCount).setValue(uiD);
+                                voteRef.child("restaurants").child(riD).child("voters").child("f" + fCount).setValue(uiD);
 
                             }
                         });
@@ -238,6 +247,22 @@ public class FirebaseServices {
                     }
                 });
 
+            }
+        });
+    }
+
+    public void addVotesRestaurantNoVote(String vid, String rid, String name, Callback callback){
+        final DatabaseReference voteRef = VOTES_REF.child(vid);
+        final String riD = rid;
+        final String viD = vid;
+        final String namE = name;
+        final Callback cb = callback;
+
+        getVotesRestaurantsCount(vid, new Callback() {
+            @Override
+            public void onCallback(Object count){
+                voteRef.child("restaurants").child(riD).child("name").setValue(namE);
+                cb.onCallback(null);
             }
         });
     }
@@ -324,13 +349,12 @@ public class FirebaseServices {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 for(DataSnapshot childRaw:dataSnapshot.getChildren()) {
-                    String id = "";
+                    String id = childRaw.getKey();
                     String name = "";
                     int votes = 0;
 
                     for (DataSnapshot attribRaw : childRaw.getChildren()) {
-                        if (attribRaw.getKey().equals("restaurant")) {
-                            id = (String) attribRaw.getValue();
+                        if (attribRaw.getKey().equals("name")) {
                             name = (String) attribRaw.getValue();
                         }
                         if (attribRaw.getKey().equals("votes")) {

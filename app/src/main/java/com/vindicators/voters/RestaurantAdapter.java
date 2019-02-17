@@ -14,14 +14,16 @@ import android.widget.CompoundButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class RestaurantAdapter extends RecyclerView.Adapter<RestaurantAdapter.ViewHolder> {
 
-    private List<User> filterList;
+    private List<RestaurantFirebase> filterList;
     private Context context;
+    public ArrayList<RestaurantFirebase> selectedRestaurants = new ArrayList<>();
 
-    public RestaurantAdapter(List<User> filterModelList, Context ctx) {
+    public RestaurantAdapter(List<RestaurantFirebase> filterModelList, Context ctx) {
         filterList = filterModelList;
         context = ctx;
     }
@@ -37,9 +39,9 @@ public class RestaurantAdapter extends RecyclerView.Adapter<RestaurantAdapter.Vi
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        User filterM = filterList.get(position);
-        holder.brandName.setText(filterM.username);
-        holder.user = filterM;
+        RestaurantFirebase filterM = filterList.get(position);
+        holder.brandName.setText(filterM.name);
+        holder.restaurant = filterM;
         //holder.productCount.setText("" + filterM.getProductCount());
         holder.selectionState.setChecked(filterM.selected);
 
@@ -56,7 +58,7 @@ public class RestaurantAdapter extends RecyclerView.Adapter<RestaurantAdapter.Vi
         public TextView brandName;
         public TextView productCount;
         public CheckBox selectionState;
-        public User user;
+        public RestaurantFirebase restaurant;
 
         public ViewHolder(View view) {
             super(view);
@@ -73,13 +75,15 @@ public class RestaurantAdapter extends RecyclerView.Adapter<RestaurantAdapter.Vi
                 public void onCheckedChanged(CompoundButton buttonView,
                                              boolean isChecked) {
                     if (isChecked) {
-                        user.selected = true;
+                        restaurant.selected = true;
+                        selectedRestaurants.add(restaurant);
                     } else {
-                        user.selected = false;
+                        restaurant.selected = false;
+                        selectedRestaurants.remove(restaurant);
                     }
 
                     Toast.makeText(RestaurantAdapter.this.context,
-                            "User: " + user.selected  ,
+                            "Restaurant: " + restaurant.name  ,
                             Toast.LENGTH_LONG).show();
 
                 }
@@ -91,5 +95,10 @@ public class RestaurantAdapter extends RecyclerView.Adapter<RestaurantAdapter.Vi
             TextView brandName = (TextView) v.findViewById(R.id.brand_name);
             //show more information about brand
         }
+    }
+
+    public void updateData(ArrayList<RestaurantFirebase> restaurants){
+        filterList = restaurants;
+        notifyDataSetChanged();
     }
 }

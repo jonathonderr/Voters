@@ -12,7 +12,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.SearchView;
 
-import java.lang.reflect.Array;
+import java.sql.Array;
 import java.util.*;
 
 /**
@@ -21,8 +21,6 @@ import java.util.*;
 
 public class CreateGroup extends AppCompatActivity {
 
-    Button chooseRestaurantButton;
-
     private RecyclerView recyclerView;
     private RecyclerView.Adapter mAdapter;
     private RecyclerView.LayoutManager layoutManager;
@@ -30,7 +28,6 @@ public class CreateGroup extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_group);
 
@@ -79,13 +76,16 @@ public class CreateGroup extends AppCompatActivity {
             }
         });
 
-        chooseRestaurantButton = (Button) findViewById(R.id.ChooseRest);
-        chooseRestaurantButton.setOnClickListener(new Button.OnClickListener() {
+
+        Button continueButton = findViewById(R.id.ChooseRest);
+        continueButton.setOnClickListener(new Button.OnClickListener() {
             @Override
             public void onClick(View v) {
-                chooseRestaurantButtonPressed();
+                continueToRestaurants(friendsAdapter);
             }
         });
+
+
     }
 
     private void getUsers(String query, Callback cb) {
@@ -106,10 +106,40 @@ public class CreateGroup extends AppCompatActivity {
         this.users = users;
     }
 
-    public void chooseRestaurantButtonPressed() {
-        Intent intent = new Intent(CreateGroup.this, VotingPage.class);
-        Button chooseRestaurantButton = (Button) findViewById(R.id.ChooseRest);
-        startActivity(intent);
+    public void continueToRestaurants(CreateGroupAdapter adapter){
+        final FirebaseServices fHelper = new FirebaseServices();
+        final CreateGroupAdapter ADAPTER = adapter;
+        fHelper.createVote(fHelper.mAuth.getCurrentUser().getUid(), new Callback() {
+            @Override
+            public void onCallback(Object v) {
+                String vid = (String) v;
+               addFriendsToVote(vid, ADAPTER.selectedUsers);
+                fHelper.USERS_REF.child(fHelper.mAuth.getCurrentUser().getUid()).child("current").setValue(vid);
+                Intent intent = new Intent(CreateGroup.this, SelectRestaurant.class);
+                startActivity(intent);
+            }
+        });
+
+
+    }
+
+    public static void addFriendsToVote(String vid, ArrayList<User> usersToMutate){
+        final FirebaseServices fHelper = new FirebaseServices();
+        final  ArrayList<User> users = usersToMutate;
+        final String v = vid;
+        if(usersToMutate.isEmpty()){
+            return;
+        }
+
+        fHelper.addVotesFriend(vid,usersToMutate.get(usersToMutate.size() - 1).uid, new Callback() {
+            @Override
+            public void onCallback(Object value) {
+                fHelper.USERS_REF.child(users.get(users.size() - 1).uid).child("current").setValue(v);
+                users.remove(users.size() - 1);
+                addFriendsToVote(v, users);
+            }
+        });
+
     }
 
 }

@@ -21,7 +21,7 @@ import java.util.List;
 public class CreateGroupAdapter extends RecyclerView.Adapter<CreateGroupAdapter.ViewHolder> {
 
     private List<User> filterList;
-    private ArrayList<User> selectedUsers = new ArrayList<>();
+    public ArrayList<User> selectedUsers = new ArrayList<>();
     private Context context;
 
     public CreateGroupAdapter(List<User> filterModelList, Context ctx) {

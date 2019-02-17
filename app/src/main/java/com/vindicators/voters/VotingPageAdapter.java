@@ -5,6 +5,7 @@ package com.vindicators.voters;
  */
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -15,16 +16,21 @@ import android.widget.CompoundButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.ValueEventListener;
+
 import java.util.ArrayList;
 import java.util.List;
 
 public class VotingPageAdapter extends RecyclerView.Adapter<VotingPageAdapter.ViewHolder> {
 
-    private List<User> filterList;
-    private ArrayList<User> selectedUsers = new ArrayList<>();
+
+    private List<RestaurantFirebase> filterList;
+    public ArrayList<RestaurantFirebase> selectedUsers = new ArrayList<>();
     private Context context;
 
-    public VotingPageAdapter(List<User> filterModelList, Context ctx) {
+    public VotingPageAdapter(List<RestaurantFirebase> filterModelList, Context ctx) {
         filterList = filterModelList;
         context = ctx;
     }
@@ -34,22 +40,22 @@ public class VotingPageAdapter extends RecyclerView.Adapter<VotingPageAdapter.Vi
 
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.filter_brand_item, parent, false);
 
-        ViewHolder viewHolder = new ViewHolder(view);
+        VotingPageAdapter.ViewHolder viewHolder = new VotingPageAdapter.ViewHolder(view);
         return viewHolder;
     }
 
     @Override
-    public void onBindViewHolder(ViewHolder holder, int position) {
-        User filterM = filterList.get(position);
-        holder.brandName.setText(filterM.username);
-        holder.user = filterM;
+    public void onBindViewHolder(VotingPageAdapter.ViewHolder holder, int position) {
+        RestaurantFirebase filterM = filterList.get(position);
+        holder.brandName.setText(filterM.name);
+        holder.restaurantFirebase = filterM;
         //holder.productCount.setText("" + filterM.getProductCount());
         holder.selectionState.setChecked(false);
         for(int i = 0; i < selectedUsers.size(); i++){
 
             if(filterM.equals(selectedUsers.get(i))){
                 holder.selectionState.setChecked(true);
-                Log.d("USERS", filterM.username + " : true");
+                Log.d("USERS", filterM.name + " : true");
 
             }
 
@@ -68,7 +74,7 @@ public class VotingPageAdapter extends RecyclerView.Adapter<VotingPageAdapter.Vi
         public TextView brandName;
         public TextView productCount;
         public CheckBox selectionState;
-        public User user;
+        public RestaurantFirebase restaurantFirebase;
 
         public ViewHolder(View view) {
             super(view);
@@ -85,16 +91,25 @@ public class VotingPageAdapter extends RecyclerView.Adapter<VotingPageAdapter.Vi
                 public void onCheckedChanged(CompoundButton buttonView,
                                              boolean isChecked) {
                     if (isChecked) {
-                        user.selected = true;
-                        selectedUsers.add(user);
-                    } else {
-                        user.selected = false;
-                        selectedUsers.remove(user);
-                    }
 
-                    Toast.makeText(VotingPageAdapter.this.context,
-                            "User: " + user.selected  ,
-                            Toast.LENGTH_LONG).show();
+                        FirebaseServices fHelper = new FirebaseServices();
+                        fHelper.USERS_REF.child(fHelper.mAuth.getCurrentUser().getUid()).child("current").addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                            }
+                        });
+
+//                        fHelper.addVotesRestaurant();
+
+                    } else {
+
+                    }
 
                 }
             });
@@ -104,11 +119,12 @@ public class VotingPageAdapter extends RecyclerView.Adapter<VotingPageAdapter.Vi
         public void onClick(View v) {
             TextView brandName = (TextView) v.findViewById(R.id.brand_name);
             //show more information about brand
+            Log.d("Clicked", "Vote");
         }
     }
 
 
-    public void updateData(ArrayList<User> users){
+    public void updateData(ArrayList<RestaurantFirebase> users){
         filterList = users;
         notifyDataSetChanged();
     }
