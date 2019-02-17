@@ -1,13 +1,22 @@
 package com.vindicators.voters;
 
 
+import android.content.Intent;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
+import android.view.View;
 import android.widget.Button;
 import android.widget.SearchView;
+
+import com.google.firebase.FirebaseApp;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.*;
 
@@ -77,22 +86,17 @@ public class SelectRestaurant extends AppCompatActivity {
             }
         });
 
-//        //RESTAURANT BUTTON
-//        restaurantButton = (Button) findViewById(R.id.goToVotesButton);
-//
-//        restaurantButton.setOnClickListener(new Button.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                restaurantButtonPressed();
-//            }
-//        });
+        //RESTAURANT BUTTON
+        restaurantButton = (Button) findViewById(R.id.goToVotesButton);
+        restaurantButton.setOnClickListener(new Button.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                restaurantButtonPressed(restaurantAdapter);
+            }
+        });
 
     }
 
-//    @Override
-//    public void onFinishInflate(){
-//
-//    }
 
     private void getUsers(String query, Callback cb) {
 
@@ -115,10 +119,44 @@ public class SelectRestaurant extends AppCompatActivity {
 
     }
 
-    public void restaurantButtonPressed(){
+    public void restaurantButtonPressed(final RestaurantAdapter adapter){
+        FirebaseServices fHelper = new FirebaseServices();
+        fHelper.USERS_REF.child(fHelper.mAuth.getCurrentUser().getUid()).child("current").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                String vid = (String) dataSnapshot.getValue();
+                addRestaurantsToVote(vid , adapter.selectedRestaurants);
+                Intent intent = new Intent(SelectRestaurant.this, VotingPage.class);
+                startActivity(intent);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Log.e("DATABASE ERROR", databaseError.getMessage());
+            }
+        });
+
+    }
+
+    public static void addRestaurantsToVote(String vid, ArrayList<RestaurantFirebase> restMutate){
+        final FirebaseServices fHelper = new FirebaseServices();
+        final  ArrayList<RestaurantFirebase> restaraunts = restMutate;
+        final String v = vid;
+        if(restMutate.isEmpty()){
+            return;
+        }
+
+        fHelper.addVotesRestaurantNoVote(vid,restMutate.get(restMutate.size() - 1).id, restMutate.get(restMutate.size() - 1).name, new Callback() {
+            @Override
+            public void onCallback(Object value) {
+                restaraunts.remove(restaraunts.size() - 1);
+                addRestaurantsToVote(v, restaraunts);
+            }
+        });
 
 
     }
+
 
 
 }

@@ -16,7 +16,7 @@ public class RestaurantFirebase {
 
     @Override
     public String toString(){
-        return (id + ":" + votes);
+        return (name + ":" + votes);
     }
 
 }

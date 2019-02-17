@@ -21,6 +21,7 @@ public class RestaurantAdapter extends RecyclerView.Adapter<RestaurantAdapter.Vi
 
     private List<RestaurantFirebase> filterList;
     private Context context;
+    public ArrayList<RestaurantFirebase> selectedRestaurants = new ArrayList<>();
 
     public RestaurantAdapter(List<RestaurantFirebase> filterModelList, Context ctx) {
         filterList = filterModelList;
@@ -75,8 +76,10 @@ public class RestaurantAdapter extends RecyclerView.Adapter<RestaurantAdapter.Vi
                                              boolean isChecked) {
                     if (isChecked) {
                         restaurant.selected = true;
+                        selectedRestaurants.add(restaurant);
                     } else {
                         restaurant.selected = false;
+                        selectedRestaurants.remove(restaurant);
                     }
 
                     Toast.makeText(RestaurantAdapter.this.context,
