@@ -138,6 +138,30 @@ public class FirebaseServices {
         });
     }
 
+    public void addUserFriend(String uid, String friendUid, Callback cb){
+        final String frienduid = friendUid;
+        final DatabaseReference userRef = USERS_REF.child(uid);
+        getFriendsCount(uid, new Callback() {
+            @Override
+            public void onCallback(Object count) {
+                userRef.child("friends").child("f" + count).setValue(frienduid);
+            }
+        });
+
+    }
+
+    public void getFriendsCount(String uid, Callback cb){
+        final Callback cB = cb;
+        DatabaseReference userFriendsRef = USERS_REF.child(uid).child("friends");
+        getPathCount(userFriendsRef, new Callback() {
+            @Override
+            public void onCallback(Object count) {
+                cB.onCallback(count);
+            }
+        });
+    }
+
+
     //DATA-VOTES
 
     public void createVote(String uid){
@@ -352,9 +376,27 @@ public class FirebaseServices {
         });
     }
 
-    public void getVotesTopRestaurant(String vid, Callback callback){
+    public void getVotesTopRestaurant(String vid, final Callback callback){
+        DatabaseReference voteRef = VOTES_REF.child(vid);
+        voteRef.child("top_result").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                callback.onCallback((String) dataSnapshot.getValue());
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Log.e("DATABASE ERROR", databaseError.getMessage());
+            }
+        });
+    }
+
+    public void searchFriends(String uid, String query){
+        DatabaseReference userFriendsRef = USERS_REF.child(uid).child("friends");
+
 
     }
+
 }
 
 
