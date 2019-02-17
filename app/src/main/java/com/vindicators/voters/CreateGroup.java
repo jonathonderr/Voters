@@ -93,7 +93,7 @@ public class CreateGroup extends AppCompatActivity {
         final Callback callback = cb;
 
         FirebaseServices fHelper = new FirebaseServices();
-        fHelper.searchUsers( query, new Callback() {
+        fHelper.searchFriends(fHelper.mAuth.getCurrentUser().getUid() ,query, new Callback() {
             @Override
             public void onCallback(Object users) {
                 callback.onCallback(users);

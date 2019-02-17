@@ -2,10 +2,15 @@ package com.vindicators.voters;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.ValueEventListener;
 
 public class HomeActivity extends AppCompatActivity {
 
@@ -33,6 +38,23 @@ public class HomeActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 addFriendsButtonPressed();
+            }
+        });
+
+        FirebaseServices fHelper = new FirebaseServices();
+        fHelper.USERS_REF.child(fHelper.mAuth.getCurrentUser().getUid()).child("current").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                String vid = (String) dataSnapshot.getValue();
+                if(!vid.isEmpty()){
+                    Intent intent = new Intent(HomeActivity.this, FinalResults.class);
+                    startActivity(intent);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
             }
         });
     }

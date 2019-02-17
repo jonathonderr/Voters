@@ -14,11 +14,14 @@ import android.widget.CompoundButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.lang.reflect.Array;
+import java.util.ArrayList;
 import java.util.List;
 
 public class FriendsListAdapter extends RecyclerView.Adapter<FriendsListAdapter.ViewHolder> {
 
     private List<User> filterList;
+    public ArrayList<User> selectedUsers = new ArrayList<>();
     private Context context;
 
     public FriendsListAdapter(List<User> filterModelList, Context ctx) {
@@ -74,13 +77,11 @@ public class FriendsListAdapter extends RecyclerView.Adapter<FriendsListAdapter.
                                              boolean isChecked) {
                     if (isChecked) {
                         user.selected = true;
+                        selectedUsers.add(user);
                     } else {
                         user.selected = false;
+                        selectedUsers.remove(user);
                     }
-
-                    Toast.makeText(FriendsListAdapter.this.context,
-                            "User: " + user.selected  ,
-                            Toast.LENGTH_LONG).show();
 
                 }
             });
@@ -91,5 +92,11 @@ public class FriendsListAdapter extends RecyclerView.Adapter<FriendsListAdapter.
             TextView brandName = (TextView) v.findViewById(R.id.brand_name);
             //show more information about brand
         }
+    }
+
+
+    public void updateData(ArrayList<User> users){
+        filterList = users;
+        notifyDataSetChanged();
     }
 }

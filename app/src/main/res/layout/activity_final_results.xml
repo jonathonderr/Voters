@@ -14,12 +14,12 @@
     <android.support.v7.widget.RecyclerView
         android:id="@+id/restaurant_list"
         android:layout_width="368dp"
-        android:layout_height="462dp"
+        android:layout_height="475dp"
         android:scrollbars="vertical"
         app:layout_constraintHorizontal_bias="0.488"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        tools:layout_editor_absoluteY="200dp" />
+        tools:layout_editor_absoluteY="187dp" />
 
     <TextView
         android:id="@+id/topResult"
