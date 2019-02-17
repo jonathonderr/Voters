@@ -5,19 +5,13 @@ import android.location.*;
 import android.provider.Settings;
 import android.support.v7.app.AlertDialog;
 import android.app.Activity;
-import android.content.Context;
-import android.content.Intent;
 import android.content.DialogInterface;
 import android.support.annotation.NonNull;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
+import android.support.v7.app.*;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.TextView;
-import android.widget.EditText;
+import android.widget.*;
 
 import com.google.firebase.auth.FirebaseUser;
 
@@ -36,6 +30,7 @@ public class MainActivity extends AppCompatActivity {
     public static final String EXTRA_MESSAGE = "com.vindicators.voters.MESSAGE";
 
     @Override
+    //onCreate - does this the first time the app is opened (unless app process is killed)
     protected void onCreate(Bundle savedInstanceState) {
         FirebaseAuth.getInstance().signOut();
         super.onCreate(savedInstanceState);
@@ -83,38 +78,35 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
-
-
-
-
     }
+
+
     @Override
+    //onStart - does this every time the app is opened
     protected void onStart() {
         super.onStart();
-        LocationManager mylocation = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
-        //final boolean gpsEnabled = mylocation.isProviderEnabled(LocationManager.GPS_PROVIDER);
-        final boolean gpsEnabled = false;
+        LocationManager mylocation = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE); //
+        final boolean gpsEnabled = mylocation.isProviderEnabled(LocationManager.GPS_PROVIDER);  //checks if gps provider is enabled on device
 
-        if (!gpsEnabled) {
-            AlertDialog.Builder dialog = new AlertDialog.Builder(this);
+        if (!gpsEnabled) { //if gps provider is disabled on device
+                           // Build an alert dialog here that requests that the user enable
+                           // the location services, then when the user clicks the "OK" button,
+                           // call enableLocationSettings()
+            AlertDialog.Builder dialog = new AlertDialog.Builder(this); //alert pop-up will display
                     dialog.setTitle("TURN ON LOCATION SERVICES");
-                    dialog.setMessage("Please turn on location services before using this app");
+                    dialog.setMessage("Please turn on location services my guy");
                     dialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
                         @Override
-                        public void onClick(DialogInterface dialog, int which) {
+                        public void onClick(DialogInterface dialog, int which) { //after "ok" button is clicked, call enableLocationSettings, dismiss pop-up
                             enableLocationSettings();
                             dialog.dismiss(); //MyActivity.dismiss();
                         }
                     });
-
-            // Build an alert dialog here that requests that the user enable
-            // the location services, then when the user clicks the "OK" button,
-            // call enableLocationSettings()
+            dialog.show();
         }
-
     }
 
-    private void enableLocationSettings() {
+    private void enableLocationSettings() { //takes user to location settings
         Intent settingsIntent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
         startActivity(settingsIntent);
     }
