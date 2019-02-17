@@ -6,6 +6,7 @@ package com.vindicators.voters;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,11 +15,13 @@ import android.widget.CompoundButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class CreateGroupAdapter extends RecyclerView.Adapter<CreateGroupAdapter.ViewHolder> {
 
     private List<User> filterList;
+    private ArrayList<User> selectedUsers = new ArrayList<>();
     private Context context;
 
     public CreateGroupAdapter(List<User> filterModelList, Context ctx) {
@@ -41,7 +44,16 @@ public class CreateGroupAdapter extends RecyclerView.Adapter<CreateGroupAdapter.
         holder.brandName.setText(filterM.username);
         holder.user = filterM;
         //holder.productCount.setText("" + filterM.getProductCount());
-        holder.selectionState.setChecked(filterM.selected);
+        holder.selectionState.setChecked(false);
+        for(int i = 0; i < selectedUsers.size(); i++){
+
+            if(filterM.equals(selectedUsers.get(i))){
+                holder.selectionState.setChecked(true);
+                Log.d("USERS", filterM.username + " : true");
+
+            }
+
+        }
 
     }
 
@@ -74,8 +86,10 @@ public class CreateGroupAdapter extends RecyclerView.Adapter<CreateGroupAdapter.
                                              boolean isChecked) {
                     if (isChecked) {
                         user.selected = true;
+                        selectedUsers.add(user);
                     } else {
                         user.selected = false;
+                        selectedUsers.remove(user);
                     }
 
                     Toast.makeText(CreateGroupAdapter.this.context,
@@ -91,5 +105,11 @@ public class CreateGroupAdapter extends RecyclerView.Adapter<CreateGroupAdapter.
             TextView brandName = (TextView) v.findViewById(R.id.brand_name);
             //show more information about brand
         }
+    }
+
+
+    public void updateData(ArrayList<User> users){
+        filterList = users;
+        notifyDataSetChanged();
     }
 }

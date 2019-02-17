@@ -18,7 +18,19 @@ public class User {
     }
     @Override
     public String toString(){
-        return (username + ":" + email);
+        return (username + ":" + selected);
     }
 
+    @Override
+    public boolean equals(Object o){
+        if(o instanceof User){
+            User user = (User) o;
+            if(user.username.equals(this.username)){
+                return true;
+            }
+
+        }
+
+        return false;
+    }
 }

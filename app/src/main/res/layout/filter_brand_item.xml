@@ -23,11 +23,13 @@
 
     <CheckBox
         android:id="@+id/brand_select"
+        style="@style/Base.Widget.AppCompat.CompoundButton.CheckBox"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp"
         android:textColor="@color/white"
+        android:textColorLink="@color/tan"
         app:layout_constraintBaseline_toBaselineOf="@+id/brand_name"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.69"
