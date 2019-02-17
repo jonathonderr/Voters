@@ -15,6 +15,10 @@
         android:theme="@style/AppTheme">
         <activity android:name=".FinalResults"></activity>
         <activity android:name=".RestaurantAdapter" />
+        <activity android:name=".VotingPageAdapter"></activity>
+        <activity android:name=".VotingPage" />
+        <activity android:name=".FriendsListAdapter" />
+        <activity android:name=".RestaurantAdapter" />
         <activity android:name=".SelectRestaurant" />
         <activity android:name=".FriendsList" />
         <activity
