@@ -7,9 +7,11 @@ import android.os.Bundle;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.telecom.Call;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.SearchView;
 
 import java.util.*;
 
@@ -22,7 +24,8 @@ public class FriendsList extends AppCompatActivity {
     private RecyclerView recyclerView;
     private RecyclerView.Adapter mAdapter;
     private RecyclerView.LayoutManager layoutManager;
-    Button restaurantButton;
+    public ArrayList<User> users = new ArrayList<>();
+
 
 
 
@@ -42,36 +45,61 @@ public class FriendsList extends AppCompatActivity {
                 layoutManager.getOrientation());
         recyclerView.addItemDecoration(dividerItemDecoration);
 
-        getUsers(new Callback() {
+        final FriendsListAdapter friendsAdapter = new FriendsListAdapter(users,FriendsList.this);
+        recyclerView.setAdapter(friendsAdapter);
+
+
+
+        SearchView searchView = findViewById(R.id.searchView);
+        searchView.setQueryHint("Search Friends");
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
-            public void onCallback(Object value) {
-                ArrayList<User> users =(ArrayList<User>) value;
-                FriendsListAdapter friendsAdapter = new FriendsListAdapter(users,FriendsList.this);
-                recyclerView.setAdapter(friendsAdapter);
+            public boolean onQueryTextSubmit(String query) {
+                return true;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                getUsers(newText, new Callback() {
+                    @Override
+                    public void onCallback(Object value) {
+                        users = (ArrayList<User>) value;
+                        friendsAdapter.updateData(users);
+                    }
+                });
+
+                return false;
             }
         });
 
 
+        getUsers("", new Callback() {
+            @Override
+            public void onCallback(Object value) {
+                users = (ArrayList<User>) value;
+                friendsAdapter.updateData(users);
+            }
+        });
+
+
+        final Button addFriends = findViewById(R.id.addFriends);
+        addFriends.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                addFriends(friendsAdapter);
+            }
+        });
 
     }
 
-    private void getUsers(Callback cb) {
+    private void getUsers(String query, Callback cb) {
 
         final Callback callback = cb;
 
         FirebaseServices fHelper = new FirebaseServices();
-        fHelper.searchUsers("", new Callback() {
+        fHelper.searchUsers(query, new Callback() {
             @Override
             public void onCallback(Object users) {
-//                User newUser = new User("Bobsyourungle", "Dontnod", "1", null);
-//                users.add(newUser);
-//                users.add(newUser);
-//                users.add(newUser);
-//                users.add(newUser);
-//                users.add(newUser);
-//                users.add(newUser);
-//                users.add(newUser);
-//                users.add(newUser);
 
                 callback.onCallback(users);
             }
@@ -79,6 +107,24 @@ public class FriendsList extends AppCompatActivity {
 
     }
 
+    public void addFriends(FriendsListAdapter adater){
+        final FriendsListAdapter adapter = adater;
+        final FirebaseServices fHelper = new FirebaseServices();
+        for(int i = 0; i < adapter.selectedUsers.size(); i++){
+            final int j = i;
+            fHelper.addUserFriend(fHelper.mAuth.getCurrentUser().getUid(), adapter.selectedUsers.get(i).uid, new Callback() {
+                @Override
+                public void onCallback(Object value) {
+                    fHelper.addUserFriend(adapter.selectedUsers.get(j).uid, fHelper.mAuth.getCurrentUser().getUid(), new Callback() {
+                        @Override
+                        public void onCallback(Object value) {
+
+                        }
+                    });
+                }
+            });
+        }
+    }
 
 
 }

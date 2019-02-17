@@ -141,6 +141,7 @@ public class FirebaseServices {
 
     public void addUserFriend(String uid, final String friendUid, Callback cb){
         final String frienduid = friendUid;
+        final Callback callback = cb;
         final DatabaseReference userRef = USERS_REF.child(uid);
         getFriendsCount(uid, new Callback() {
             @Override
@@ -152,6 +153,7 @@ public class FirebaseServices {
                     public void onCallback(Object user) {
                         User useR = (User) user;
                         userRef.child("friends").child("f" + counT).child("username").setValue(useR.username);
+                        callback.onCallback(null);
                     }
                 });
             }

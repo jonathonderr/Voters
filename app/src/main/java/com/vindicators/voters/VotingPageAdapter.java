@@ -100,6 +100,7 @@ public class VotingPageAdapter extends RecyclerView.Adapter<VotingPageAdapter.Vi
                                 final String vid = (String) dataSnapshot.getValue();
                                 fHelper.addVotesRestaurant(vid, restaurantFirebase.id, restaurantFirebase.name, fHelper.mAuth.getCurrentUser().getUid());
                                 Intent intent = new Intent(context, FinalResults.class);
+                                context.startActivity(intent);
                             }
 
                             @Override
